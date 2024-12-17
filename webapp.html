@@ -1,0 +1,170 @@
+<!-- A small web app created in collaboration with AI: 
+Be creative. Here are some examples of what other students have done. 
+Keep in mind that the first three are fairly basic. To merit full credit on an app like one of 
+these first three would require you to creatively contribute (either in style or function) 
+to what the AI comes up with to go beyond a basic app.
+Riddle generator
+Joke generator
+Number guessing game
+Snake game
+Wordle clone
+Try to keep the code for this app in a single page (e.g., styles, html, and scripts all on one page).
+---This page should be accessible via a link from the scratch page.
+Rarely will the AI get it right on the first attempt. Feel free to iterate and refine with the AI until it meets your expectations. 
+You are also encouraged to edit the AI solution to be just how you want it. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5fcfc;
+        }
+
+        canvas {
+            border: 10px solid #250fe8;
+            background-color: #fff;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #333;
+        }
+        a:hover{
+            font-size: larger;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Snake Game</h1>
+    <a href="scratch.html">Return to Scratch</a>
+    <a href="./startbootstrap-business-casual-gh-pages/index.html">Return to Professional</a>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="message" id="inspiration"></div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let snake = [{ x: 200, y: 200 }];
+        let direction = { x: 0, y: 0 };
+        let food = { x: randomPosition(), y: randomPosition() };
+        let obstacles = [];
+        let score = 0;
+        let colors = ["green", "blue", "purple", "orange", "pink", "yellow"];
+        let messages = [
+            "You're on a roll—don't crash!",
+            "Keep debugging your way forward!",
+            "You're byte-ing off the competition!",
+            "This game is hard drive-ing you crazy!",
+            "Keep coding your path to victory!",
+            "You're RAM-ping up to success!",
+            "Cache your breath and keep going!"
+        ];
+
+        function randomPosition() {
+            return Math.floor(Math.random() * 20) * 20;
+        }
+
+        function drawSnake() {
+            ctx.fillStyle = colors[score % colors.length];
+            snake.forEach(segment => {
+                ctx.fillRect(segment.x, segment.y, 20, 20);
+            });
+        }
+
+        function drawFood() {
+            ctx.fillStyle = "red";
+            ctx.fillRect(food.x, food.y, 20, 20);
+        }
+
+        function drawObstacles() {
+            ctx.fillStyle = "black";
+            obstacles.forEach(obstacle => {
+                ctx.fillRect(obstacle.x, obstacle.y, 20, 20);
+            });
+        }
+
+        function updateSnake() {
+            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                food = { x: randomPosition(), y: randomPosition() };
+                if (score === 7) {
+                    for (let i = 0; i < 5; i++) {
+                        obstacles.push({ x: randomPosition(), y: randomPosition() });
+                    }
+                }
+                displayMessage();
+            } else {
+                snake.pop();
+            }
+
+            snake.unshift(head);
+
+            // Check for collisions
+            if (
+                head.x < 0 || head.y < 0 || head.x >= canvas.width || head.y >= canvas.height ||
+                snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y) ||
+                obstacles.some(obstacle => obstacle.x === head.x && obstacle.y === head.y)
+            ) {
+                alert("Game Over! Your score: " + score);
+                resetGame();
+            }
+        }
+
+        function displayMessage() {
+            const inspiration = document.getElementById("inspiration");
+            inspiration.textContent = messages[Math.floor(Math.random() * messages.length)];
+        }
+
+        function resetGame() {
+            snake = [{ x: 200, y: 200 }];
+            direction = { x: 0, y: 0 };
+            food = { x: randomPosition(), y: randomPosition() };
+            obstacles = [];
+            score = 0;
+            document.getElementById("inspiration").textContent = "";
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawFood();
+            drawSnake();
+            if (score >= 7) drawObstacles();
+            updateSnake();
+        }
+
+        document.addEventListener("keydown", event => {
+            switch (event.key) {
+                case "ArrowUp":
+                    if (direction.y === 0) direction = { x: 0, y: -20 };
+                    break;
+                case "ArrowDown":
+                    if (direction.y === 0) direction = { x: 0, y: 20 };
+                    break;
+                case "ArrowLeft":
+                    if (direction.x === 0) direction = { x: -20, y: 0 };
+                    break;
+                case "ArrowRight":
+                    if (direction.x === 0) direction = { x: 20, y: 0 };
+                    break;
+            }
+        });
+
+        setInterval(gameLoop, 100);
+    </script>
+</body>
+</html>
