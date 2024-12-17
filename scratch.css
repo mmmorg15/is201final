@@ -32,6 +32,7 @@ a:hover{
 div{
     font-size: 300%;
     color: rgb(183, 204, 223);
+    text-align: center;
 }
 .tab{
     border: 5px solid rgb(239, 232, 232);
